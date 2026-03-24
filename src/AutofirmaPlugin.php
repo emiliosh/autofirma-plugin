@@ -7,14 +7,10 @@ namespace Emiliosh\AutofirmaPlugin;
 use Emiliosh\AutofirmaPlugin\Livewire\AutofirmaModal;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
 
 class AutofirmaPlugin implements Plugin
 {
-    protected string $autofirmaJsUrl = 'https://estaticos.redsara.es/comunes/autofirma/currentversion/AutoScript.js';
-
     protected bool $useLocalService = false;
 
     protected int $localServicePort = 51234;
@@ -54,27 +50,11 @@ class AutofirmaPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
-        FilamentAsset::register([
-            Js::make('autofirma-plugin', __DIR__ . '/../resources/js/autofirma.js'),
-            Js::make('autofirma-autoscript', $this->autofirmaJsUrl)->loadedOnRequest(),
-        ], package: 'emiliosh/autofirma-plugin');
     }
 
     // -------------------------------------------------------------------------
     // Fluent configuration
     // -------------------------------------------------------------------------
-
-    public function autofirmaJsUrl(string $url): static
-    {
-        $this->autofirmaJsUrl = $url;
-
-        return $this;
-    }
-
-    public function getAutofirmaJsUrl(): string
-    {
-        return $this->autofirmaJsUrl;
-    }
 
     public function useLocalService(bool $condition = true): static
     {

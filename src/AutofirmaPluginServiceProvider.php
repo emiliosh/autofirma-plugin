@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Emiliosh\AutofirmaPlugin;
 
-use Emiliosh\AutofirmaPlugin\Facades\Autofirma;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\ServiceProvider;
 
 class AutofirmaPluginServiceProvider extends ServiceProvider
@@ -27,6 +28,11 @@ class AutofirmaPluginServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'autofirma-plugin');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'autofirma-plugin');
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
+        FilamentAsset::register([
+            Js::make('autofirma-autoscript', __DIR__ . '/../resources/js/autoscript.js'),
+            Js::make('autofirma-plugin', __DIR__ . '/../resources/js/autofirma.js'),
+        ], package: 'emiliosh/autofirma-plugin');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([

@@ -12,20 +12,6 @@ describe('AutofirmaPlugin', function (): void {
         expect($plugin->getId())->toBe('autofirma-plugin');
     });
 
-    it('usa la URL de AutoScript por defecto', function (): void {
-        $plugin = AutofirmaPlugin::make();
-
-        expect($plugin->getAutofirmaJsUrl())
-            ->toContain('estaticos.redsara.es');
-    });
-
-    it('permite cambiar la URL de AutoScript', function (): void {
-        $plugin = AutofirmaPlugin::make()
-            ->autofirmaJsUrl('https://mi-cdn.example.com/AutoScript.js');
-
-        expect($plugin->getAutofirmaJsUrl())->toBe('https://mi-cdn.example.com/AutoScript.js');
-    });
-
     it('usa SHA512withRSA como algoritmo por defecto', function (): void {
         $plugin = AutofirmaPlugin::make();
 

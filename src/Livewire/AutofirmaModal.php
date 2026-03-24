@@ -81,6 +81,7 @@ class AutofirmaModal extends Component
     public function render(): \Illuminate\View\View
     {
         return view('autofirma-plugin::livewire.autofirma-modal', [
+            'encodedData' => $this->encodedData,
             'pluginConfig' => $this->getPluginConfig(),
         ]);
     }

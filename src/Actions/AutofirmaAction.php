@@ -49,9 +49,11 @@ class AutofirmaAction extends Action
 
         $this->modalSubmitActionLabel(__('autofirma-plugin::autofirma-plugin.modal.submit'));
 
-        $this->modalContent(
-            view('autofirma-plugin::livewire.autofirma-modal'),
-        );
+        $this->modalContent(function (mixed $record = null): \Illuminate\Contracts\View\View {
+            return view('autofirma-plugin::livewire.autofirma-modal-slot', [
+                'encodedData' => $this->getEncodedData($record),
+            ]);
+        });
 
         // Cuando el usuario confirma el modal, recogemos la firma del store Alpine
         $this->action(function (array $arguments, mixed $record = null): void {

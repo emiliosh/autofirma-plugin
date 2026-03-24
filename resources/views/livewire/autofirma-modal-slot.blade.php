@@ -1,0 +1,1 @@
+@livewire('autofirma-modal', ['encodedData' => $encodedData])
