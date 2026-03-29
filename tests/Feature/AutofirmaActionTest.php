@@ -32,4 +32,29 @@ describe('AutofirmaAction', function (): void {
         // Este test requiere un panel Filament registrado; se completará
         // en la integración con TestPanel.
     })->todo();
+
+    it('ejecuta afterSigned con la firma cuando se completa la firma', function (): void {
+        $called    = false;
+        $received  = null;
+
+        $action = AutofirmaAction::make('autofirma')
+            ->dataToSign('contenido del documento')
+            ->afterSigned(function (string $sig, mixed $record) use (&$called, &$received): void {
+                $called   = true;
+                $received = $sig;
+            });
+
+        $signature = base64_encode('firma-resultante');
+        $action->invokeAfterSigned($signature);
+
+        expect($called)->toBeTrue();
+        expect($received)->toBe($signature);
+    });
+
+    it('no falla cuando afterSigned no está configurado', function (): void {
+        $action = AutofirmaAction::make('autofirma')
+            ->dataToSign('contenido');
+
+        expect(fn () => $action->invokeAfterSigned(base64_encode('firma')))->not->toThrow(\Throwable::class);
+    });
 });

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Emiliosh\AutofirmaPlugin;
 
-use Emiliosh\AutofirmaPlugin\Livewire\AutofirmaModal;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Livewire\Livewire;
 
 class AutofirmaPlugin implements Plugin
 {
@@ -15,9 +13,9 @@ class AutofirmaPlugin implements Plugin
 
     protected int $localServicePort = 51234;
 
-    protected string $algorithm = 'SHA512withRSA';
+    protected string $algorithm = 'SHA256withRSA';
 
-    protected string $signatureFormat = 'XAdES';
+    protected string $signatureFormat = 'PAdES';
 
     protected bool $verifySignature = true;
 
@@ -45,7 +43,6 @@ class AutofirmaPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        Livewire::component('autofirma-modal', AutofirmaModal::class);
     }
 
     public function boot(Panel $panel): void

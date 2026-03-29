@@ -34,7 +34,7 @@ return [
     |   CAdES  → binarios / CMS
     |   PAdES  → documentos PDF
     */
-    'signature_format' => env('AUTOFIRMA_FORMAT', 'XAdES'),
+    'signature_format' => env('AUTOFIRMA_FORMAT', 'PAdES'),
 
     /*
     |--------------------------------------------------------------------------

@@ -1,7 +1,5 @@
 <div
     x-data="autofirmaModal(@js($encodedData), @js($pluginConfig))"
-    x-init="init()"
-    wire:ignore.self
 >
     {{-- Estado: idle --}}
     <div x-show="status === 'idle'" class="flex flex-col items-center gap-4 py-4">
@@ -20,7 +18,7 @@
 
     {{-- Estado: loading --}}
     <div x-show="status === 'loading'" class="flex flex-col items-center gap-4 py-4">
-        <x-filament::loading-indicator class="h-8 w-8 text-primary-500" />
+        <x-filament::loading-indicator class="w-4 text-primary-500" />
         <p class="text-sm text-gray-600 dark:text-gray-400">
             {{ __('autofirma-plugin::autofirma-plugin.modal.waiting') }}
         </p>
@@ -28,7 +26,7 @@
 
     {{-- Estado: signed --}}
     <div x-show="status === 'signed'" class="flex flex-col items-center gap-4 py-4">
-        <x-heroicon-o-check-circle class="h-8 w-8 text-success-500" />
+        <x-heroicon-o-check-circle class="w-4 text-success-500" />
         <p class="text-sm font-medium text-success-600 dark:text-success-400">
             {{ __('autofirma-plugin::autofirma-plugin.modal.signed') }}
         </p>

@@ -12,22 +12,22 @@ describe('AutofirmaPlugin', function (): void {
         expect($plugin->getId())->toBe('autofirma-plugin');
     });
 
-    it('usa SHA512withRSA como algoritmo por defecto', function (): void {
+    it('usa SHA256withRSA como algoritmo por defecto', function (): void {
         $plugin = AutofirmaPlugin::make();
-
-        expect($plugin->getAlgorithm())->toBe('SHA512withRSA');
-    });
-
-    it('permite configurar el algoritmo de firma', function (): void {
-        $plugin = AutofirmaPlugin::make()->algorithm('SHA256withRSA');
 
         expect($plugin->getAlgorithm())->toBe('SHA256withRSA');
     });
 
-    it('usa XAdES como formato de firma por defecto', function (): void {
+    it('permite configurar el algoritmo de firma', function (): void {
+        $plugin = AutofirmaPlugin::make()->algorithm('SHA512withRSA');
+
+        expect($plugin->getAlgorithm())->toBe('SHA512withRSA');
+    });
+
+    it('usa PAdES como formato de firma por defecto', function (): void {
         $plugin = AutofirmaPlugin::make();
 
-        expect($plugin->getSignatureFormat())->toBe('XAdES');
+        expect($plugin->getSignatureFormat())->toBe('PAdES');
     });
 
     it('no usa el servicio local por defecto', function (): void {

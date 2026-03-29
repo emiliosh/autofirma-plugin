@@ -4,9 +4,10 @@
  * Componente Alpine.js que gestiona la integración con AutoFirma.
  *
  * Flujo:
- *   1. init()  → comprueba si AutoScript está disponible en la página.
- *   2. sign()  → llama a AutoScript.firma() con los datos y la config del plugin.
- *   3. Los callbacks de AutoFirma actualizan el estado y disparan eventos Livewire.
+ *   1. sign()      → llama a AutoScript.firma() con los datos y la config del plugin.
+ *   2. onSuccess() → actualiza el estado y llama a $wire.callMountedAction({signature})
+ *                    para que Filament ejecute el closure action() de AutofirmaAction.
+ *   3. onError()   → actualiza el estado de error sin necesidad de notificar a Livewire.
  */
 
 document.addEventListener('alpine:init', () => {
@@ -18,18 +19,6 @@ document.addEventListener('alpine:init', () => {
 
         encodedData: encodedData,
         config: config,
-
-        // ------------------------------------------------------------------
-        // Lifecycle
-        // ------------------------------------------------------------------
-
-        init() {
-            // Escucha el evento emitido por Livewire cuando la firma ya fue procesada
-            this.$wire.on('autofirma-plugin:signature-ready', () => {
-                // La firma está lista; el modal puede cerrarse automáticamente
-                // si así lo configura la Action.
-            });
-        },
 
         // ------------------------------------------------------------------
         // Firma
@@ -51,11 +40,10 @@ document.addEventListener('alpine:init', () => {
             try {
                 AutoScript.cargarAppAfirma();
 
-                AutoScript.firma(
+                AutoScript.sign(
+                    this.encodedData,               // Datos a firmar (base64)
                     this.config.algorithm,          // Algoritmo
                     this.config.format,             // Formato (XAdES, CAdES, PAdES)
-                    'base64',                       // Tipo de datos de entrada
-                    this.encodedData,               // Datos a firmar (base64)
                     this.buildParams(),             // Parámetros adicionales
                     (signatureB64) => this.onSuccess(signatureB64),
                     (errorCode, errorMessage) => this.onError(errorCode, errorMessage),
@@ -73,9 +61,9 @@ document.addEventListener('alpine:init', () => {
             this.signature = signatureB64;
             this.status    = 'signed';
 
-            // Envía la firma al componente Livewire
-            this.$dispatch('autofirma:signed', signatureB64);
-            this.$wire.dispatch('autofirma:signed', { signature: signatureB64 });
+            // Llama al action closure de AutofirmaAction con la firma como argumento.
+            // $wire aquí apunta al componente Filament (page), no a un Livewire anidado.
+            $wire.callMountedAction({ signature: signatureB64 });
         },
 
         onError(errorCode, errorMessage) {
@@ -84,7 +72,6 @@ document.addEventListener('alpine:init', () => {
                 : `Error de AutoFirma (código ${errorCode})`;
 
             this.setError(message);
-            this.$wire.dispatch('autofirma:error', { message });
         },
 
         setError(message) {

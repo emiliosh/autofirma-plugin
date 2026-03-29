@@ -47,15 +47,17 @@ class AutofirmaAction extends Action
 
         $this->modalDescription(__('autofirma-plugin::autofirma-plugin.modal.description'));
 
-        $this->modalSubmitActionLabel(__('autofirma-plugin::autofirma-plugin.modal.submit'));
+        // Alpine llama a $wire.callMountedAction({signature:...}), no hace falta botón de submit.
+        $this->modalSubmitAction(false);
 
         $this->modalContent(function (mixed $record = null): \Illuminate\Contracts\View\View {
-            return view('autofirma-plugin::livewire.autofirma-modal-slot', [
-                'encodedData' => $this->getEncodedData($record),
+            return view('autofirma-plugin::livewire.autofirma-modal', [
+                'encodedData'  => $this->getEncodedData($record),
+                'pluginConfig' => $this->getAutofirmaConfig(),
             ]);
         });
 
-        // Cuando el usuario confirma el modal, recogemos la firma del store Alpine
+        // Filament ejecuta este closure cuando Alpine llama a $wire.callMountedAction({signature:...}).
         $this->action(function (array $arguments, mixed $record = null): void {
             $signatureB64 = $arguments['signature'] ?? null;
 
@@ -79,9 +81,7 @@ class AutofirmaAction extends Action
                 return;
             }
 
-            if ($this->afterSigned instanceof Closure) {
-                ($this->afterSigned)($signatureB64, $record);
-            }
+            $this->invokeAfterSigned($signatureB64, $record);
 
             $this->successNotificationTitle(__('autofirma-plugin::autofirma-plugin.notification.signed'));
             $this->success();
@@ -111,6 +111,17 @@ class AutofirmaAction extends Action
         $this->onSignError = $callback;
 
         return $this;
+    }
+
+    // -------------------------------------------------------------------------
+    // Invocación de callbacks
+    // -------------------------------------------------------------------------
+
+    public function invokeAfterSigned(string $signatureB64, mixed $record = null): void
+    {
+        if ($this->afterSigned instanceof Closure) {
+            ($this->afterSigned)($signatureB64, $record);
+        }
     }
 
     // -------------------------------------------------------------------------
